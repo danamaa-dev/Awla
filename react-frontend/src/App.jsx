@@ -1,42 +1,50 @@
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import Navbar from './components/Navbar'
-import Login from './pages/Login'
-import Dashboard from './pages/Dashboard'
-import NewRequest from './pages/NewRequest'
-import MeetingReport from './pages/MeetingReport'
+
+const Login         = lazy(() => import('./pages/Login'))
+const Dashboard     = lazy(() => import('./pages/Dashboard'))
+const NewRequest    = lazy(() => import('./pages/NewRequest'))
+const MeetingReport = lazy(() => import('./pages/MeetingReport'))
+
+function FullPageSpinner() {
+  return (
+    <div style={{
+      minHeight: '100vh', backgroundColor: 'var(--bg)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+    }}>
+      <div className="spinner" />
+    </div>
+  )
+}
 
 function AppShell() {
   const { user, loading } = useAuth()
 
   if (loading) {
-    return (
-      <div style={{
-        minHeight: '100vh', backgroundColor: '#F4F6F9',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-      }}>
-        <div className="spinner" />
-      </div>
-    )
+    return <FullPageSpinner />
   }
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#F4F6F9' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg)' }}>
       {user && <Navbar />}
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/" element={
-          <ProtectedRoute><Dashboard /></ProtectedRoute>
-        } />
-        <Route path="/new" element={
-          <ProtectedRoute><NewRequest /></ProtectedRoute>
-        } />
-        <Route path="/report" element={
-          <ProtectedRoute managerOnly><MeetingReport /></ProtectedRoute>
-        } />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+      <Suspense fallback={<FullPageSpinner />}>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/" element={
+            <ProtectedRoute><Dashboard /></ProtectedRoute>
+          } />
+          <Route path="/new" element={
+            <ProtectedRoute><NewRequest /></ProtectedRoute>
+          } />
+          <Route path="/report" element={
+            <ProtectedRoute managerOnly><MeetingReport /></ProtectedRoute>
+          } />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Suspense>
     </div>
   )
 }

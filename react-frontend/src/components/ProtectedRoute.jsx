@@ -7,7 +7,7 @@ export function ProtectedRoute({ children, managerOnly = false }) {
   if (loading) {
     return (
       <div style={{
-        minHeight: '100vh', backgroundColor: '#F4F6F9',
+        minHeight: '100vh', backgroundColor: 'var(--bg)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}>
         <div className="spinner" />

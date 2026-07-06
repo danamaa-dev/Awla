@@ -47,7 +47,7 @@ function AgentProgress({ activeStep, doneSteps }) {
             </div>
             <div className="step-body">
               <div className="step-name" style={{
-                color: isDone ? '#059669' : isActive ? '#4F46E5' : '#374151',
+                color: isDone ? 'var(--success)' : isActive ? 'var(--accent-indigo)' : 'var(--text-heading)',
               }}>
                 {step.name}
                 {isActive && (
@@ -213,7 +213,7 @@ export default function NewRequest() {
       {/* Agent progress panel — shown during analysis and decision */}
       {(phase === 'analyzing' || phase === 'decision' || phase === 'clarification') && (
         <div className="card" style={{ marginBottom: '24px' }}>
-          <div style={{ fontSize: '12px', fontWeight: 700, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '16px' }}>
+          <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '16px' }}>
             AI Agent Activity
           </div>
           <AgentProgress activeStep={activeStep} doneSteps={doneSteps} />
@@ -289,7 +289,6 @@ export default function NewRequest() {
                 min={todayStr()}
                 value={form.deadline}
                 onChange={e => set('deadline', e.target.value)}
-                style={{ colorScheme: 'light' }}
                 required
               />
             </div>
@@ -313,8 +312,8 @@ export default function NewRequest() {
           </div>
           {clarifications.map((q, i) => (
             <div key={i} style={{
-              color: '#374151', fontSize: '13px',
-              paddingLeft: '12px', borderLeft: '3px solid #FDE68A',
+              color: 'var(--text-heading)', fontSize: '13px',
+              paddingLeft: '12px', borderLeft: '3px solid var(--warning-border)',
               marginBottom: '8px', lineHeight: 1.55,
             }}>
               {i + 1}. {q}
@@ -339,27 +338,27 @@ export default function NewRequest() {
         <>
           {/* AI result card */}
           <div className="form-card" style={{ marginBottom: '16px' }}>
-            <div style={{ fontSize: '11px', fontWeight: 700, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '12px' }}>
+            <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '12px' }}>
               AI Analysis Result
             </div>
 
             <div style={{ display: 'flex', alignItems: 'flex-end', gap: '16px', marginBottom: '20px' }}>
-              <div style={{ color: '#111827', fontSize: '52px', fontWeight: 800, lineHeight: 1 }}>
+              <div style={{ color: 'var(--text)', fontSize: '52px', fontWeight: 800, lineHeight: 1 }}>
                 {aiResult.score}
               </div>
               <div style={{ paddingBottom: '8px' }}>
-                <div style={{ color: '#6B7280', fontSize: '13px' }}>out of 10</div>
+                <div style={{ color: 'var(--text-dim)', fontSize: '13px' }}>out of 10</div>
                 <div style={{ marginTop: '6px' }}><PriorityBadge score={aiResult.score} /></div>
               </div>
             </div>
 
             {aiResult.reasons?.length > 0 && (
               <div style={{ marginBottom: '16px' }}>
-                <div style={{ fontSize: '12px', color: '#6B7280', fontWeight: 500, marginBottom: '8px' }}>Reasons</div>
+                <div style={{ fontSize: '12px', color: 'var(--text-dim)', fontWeight: 500, marginBottom: '8px' }}>Reasons</div>
                 {aiResult.reasons.map((r, i) => (
                   <div key={i} style={{
-                    color: '#374151', fontSize: '13px',
-                    paddingLeft: '12px', borderLeft: '3px solid #4F46E5',
+                    color: 'var(--text-heading)', fontSize: '13px',
+                    paddingLeft: '12px', borderLeft: '3px solid var(--accent-indigo)',
                     marginBottom: '6px', lineHeight: 1.55,
                   }}>{r}</div>
                 ))}
@@ -368,9 +367,9 @@ export default function NewRequest() {
 
             {aiResult.rag_references?.length > 0 && (
               <div>
-                <div style={{ fontSize: '12px', color: '#6B7280', fontWeight: 500, marginBottom: '6px' }}>Policy References</div>
+                <div style={{ fontSize: '12px', color: 'var(--text-dim)', fontWeight: 500, marginBottom: '6px' }}>Policy References</div>
                 {aiResult.rag_references.map((ref, i) => (
-                  <div key={i} style={{ color: '#9CA3AF', fontSize: '12px', marginBottom: '3px' }}>{ref}</div>
+                  <div key={i} style={{ color: 'var(--text-faint)', fontSize: '12px', marginBottom: '3px' }}>{ref}</div>
                 ))}
               </div>
             )}
@@ -380,7 +379,7 @@ export default function NewRequest() {
           <div className="form-card">
             {isManager ? (
               <>
-                <div style={{ color: '#111827', fontSize: '15px', fontWeight: 600, marginBottom: '20px' }}>
+                <div style={{ color: 'var(--text)', fontSize: '15px', fontWeight: 600, marginBottom: '20px' }}>
                   Manager Decision
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
@@ -400,7 +399,7 @@ export default function NewRequest() {
                   </button>
                 </div>
 
-                <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid #F3F4F6' }}>
+                <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid var(--surface-3)' }}>
                   <label className="label">Approve with custom score</label>
                   <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                     <input
@@ -424,15 +423,15 @@ export default function NewRequest() {
               /* Employee view — request is already pending_approval */
               <div style={{ textAlign: 'center', padding: '8px 0' }}>
                 <div style={{ marginBottom: '12px', display: 'flex', justifyContent: 'center' }}>
-                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--success)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <circle cx="12" cy="12" r="10"/>
                     <polyline points="9 12 11 14 15 10"/>
                   </svg>
                 </div>
-                <div style={{ fontSize: '16px', fontWeight: 600, color: '#111827', marginBottom: '8px' }}>
+                <div style={{ fontSize: '16px', fontWeight: 600, color: 'var(--text)', marginBottom: '8px' }}>
                   Request Submitted for Review
                 </div>
-                <div style={{ fontSize: '14px', color: '#6B7280', marginBottom: '20px' }}>
+                <div style={{ fontSize: '14px', color: 'var(--text-dim)', marginBottom: '20px' }}>
                   Your request (priority score: {aiResult.score}) has been sent to a manager for approval.
                 </div>
                 <button onClick={handleEmployeeDone} className="btn-primary" style={{ padding: '10px 24px' }}>

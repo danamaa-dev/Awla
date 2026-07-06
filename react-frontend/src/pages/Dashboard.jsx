@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { getRequests } from '../api/client'
 import { useAuth } from '../context/AuthContext'
 import RequestCard from '../components/RequestCard'
+import RequestCardSkeleton from '../components/RequestCardSkeleton'
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts'
@@ -26,9 +27,9 @@ const STATUS_LABELS = {
 }
 
 const tooltipStyle = {
-  contentStyle: { backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '8px' },
-  labelStyle:   { color: '#111827' },
-  itemStyle:    { color: '#6B7280' },
+  contentStyle: { backgroundColor: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '8px' },
+  labelStyle:   { color: 'var(--text)' },
+  itemStyle:    { color: 'var(--text-dim)' },
 }
 
 export default function Dashboard() {
@@ -119,15 +120,15 @@ export default function Dashboard() {
       </p>
 
       {/* Stat cards */}
-      <div style={{ display: 'flex', gap: '16px', marginBottom: '28px' }}>
+      <div className="stat-row">
         <div className="stat-card total">
           <div className="stat-label">Total Requests</div>
           <div className="stat-value total">{total}</div>
         </div>
         {isManager && pendingApprovalCount > 0 && (
-          <div className="stat-card" style={{ borderLeftColor: '#4F46E5' }}>
+          <div className="stat-card" style={{ borderLeftColor: 'var(--accent-indigo)' }}>
             <div className="stat-label">Pending Approval</div>
-            <div className="stat-value" style={{ color: '#4F46E5' }}>{pendingApprovalCount}</div>
+            <div className="stat-value" style={{ color: 'var(--accent-indigo)' }}>{pendingApprovalCount}</div>
           </div>
         )}
         <div className="stat-card pending">
@@ -146,46 +147,50 @@ export default function Dashboard() {
 
       {error && <div className="alert-error">{error}</div>}
 
-      {/* Search */}
-      <label htmlFor="request-search" className="sr-only">Search requests</label>
-      <input
-        id="request-search"
-        type="text"
-        placeholder={isManager ? 'Search by title, department, or submitter...' : 'Search by title or department...'}
-        value={search}
-        onChange={e => setSearch(e.target.value)}
-        className="input"
-        style={{ marginBottom: '14px' }}
-      />
+      {/* Search + filters */}
+      <div className="stack stack-3" style={{ marginBottom: '20px' }}>
+        <div>
+          <label htmlFor="request-search" className="sr-only">Search requests</label>
+          <input
+            id="request-search"
+            type="text"
+            placeholder={isManager ? 'Search by title, department, or submitter...' : 'Search by title or department...'}
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="input"
+          />
+        </div>
 
-      {/* Filter tabs */}
-      <div className="filter-tabs" role="tablist" aria-label="Filter by status" style={{ marginBottom: '16px' }}>
-        {filters.map(f => (
-          <button
-            key={f}
-            role="tab"
-            aria-selected={statusFilter === f}
-            onClick={() => setStatusFilter(f)}
-            className={`filter-tab ${statusFilter === f ? 'active' : ''}`}
-          >
-            {f}
-          </button>
-        ))}
+        <div className="filter-tabs" role="tablist" aria-label="Filter by status">
+          {filters.map(f => (
+            <button
+              key={f}
+              role="tab"
+              aria-selected={statusFilter === f}
+              onClick={() => setStatusFilter(f)}
+              className={`filter-tab ${statusFilter === f ? 'active' : ''}`}
+            >
+              {f}
+            </button>
+          ))}
+        </div>
       </div>
 
-      <div style={{ color: '#6B7280', fontSize: '12px', marginBottom: '12px' }}>
-        {filtered.length} request{filtered.length !== 1 ? 's' : ''}
+      <div style={{ color: 'var(--text-dim)', fontSize: '12px', marginBottom: '12px' }} aria-live="polite">
+        {loading ? 'Loading requests…' : `${filtered.length} request${filtered.length !== 1 ? 's' : ''}`}
       </div>
 
       {/* Request list */}
       {loading ? (
-        <div style={{ display: 'flex', justifyContent: 'center', padding: '60px 0' }}>
-          <div className="spinner" />
+        <div aria-hidden="true">
+          <RequestCardSkeleton />
+          <RequestCardSkeleton />
+          <RequestCardSkeleton />
         </div>
       ) : filtered.length === 0 && requests.length === 0 ? (
         <div className="empty-state">
           <div className="empty-icon">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--text-faint)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
               <rect x="9" y="3" width="6" height="4" rx="1"/>
               <line x1="9" y1="12" x2="15" y2="12"/>
@@ -206,9 +211,9 @@ export default function Dashboard() {
         </div>
       ) : filtered.length === 0 ? (
         <div style={{
-          backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB',
+          backgroundColor: 'var(--surface)', border: '1px solid var(--border)',
           borderRadius: '10px', padding: '40px',
-          textAlign: 'center', color: '#6B7280', fontSize: '14px',
+          textAlign: 'center', color: 'var(--text-dim)', fontSize: '14px',
         }}>
           No requests match your filters.
         </div>
@@ -232,7 +237,7 @@ export default function Dashboard() {
               >
                 Previous
               </button>
-              <span style={{ fontSize: '13px', color: '#6B7280' }}>
+              <span style={{ fontSize: '13px', color: 'var(--text-dim)' }}>
                 Page {page} of {pageCount}
               </span>
               <button
@@ -253,7 +258,7 @@ export default function Dashboard() {
       {requests.filter(r => r.status !== 'pending_approval').length >= 2 && (
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop: '40px' }}>
           <div className="card">
-            <div style={{ color: '#111827', fontSize: '14px', fontWeight: 600, marginBottom: '18px' }}>
+            <div style={{ color: 'var(--text)', fontSize: '14px', fontWeight: 600, marginBottom: '18px' }}>
               Requests by Department
             </div>
             <ResponsiveContainer width="100%" height={220}>
@@ -268,7 +273,7 @@ export default function Dashboard() {
           </div>
 
           <div className="card">
-            <div style={{ color: '#111827', fontSize: '14px', fontWeight: 600, marginBottom: '18px' }}>
+            <div style={{ color: 'var(--text)', fontSize: '14px', fontWeight: 600, marginBottom: '18px' }}>
               Requests by Status
             </div>
             <ResponsiveContainer width="100%" height={220}>

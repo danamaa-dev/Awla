@@ -31,30 +31,30 @@ export default function Login() {
   return (
     <div style={{
       minHeight: '100vh',
-      backgroundColor: '#F4F6F9',
+      backgroundColor: 'var(--bg)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
       padding: '24px',
     }}>
       <div style={{
-        backgroundColor: '#FFFFFF',
-        border: '1px solid #E5E7EB',
+        backgroundColor: 'var(--surface)',
+        border: '1px solid var(--border)',
         borderRadius: '16px',
         padding: '44px 40px',
         width: '100%',
         maxWidth: '420px',
-        boxShadow: '0 4px 24px rgba(0,0,0,0.07)',
+        boxShadow: 'var(--shadow-lg)',
       }}>
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
             <AwlaLogo size={90} />
           </div>
-          <div style={{ fontSize: '14px', color: '#6B7280', marginTop: '4px' }}>
+          <div style={{ fontSize: '14px', color: 'var(--text-dim)', marginTop: '4px' }}>
             AI Request Governance System
           </div>
-          <div style={{ fontSize: '13px', color: '#9CA3AF', marginTop: '2px' }}>
+          <div style={{ fontSize: '13px', color: 'var(--text-faint)', marginTop: '2px' }}>
             Sign in to your account
           </div>
         </div>

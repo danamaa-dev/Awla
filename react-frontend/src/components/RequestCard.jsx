@@ -128,9 +128,9 @@ export default function RequestCard({ request, onUpdate }) {
   return (
     <>
       <div style={{
-        backgroundColor: '#FFFFFF',
-        border: isPendingApproval ? '1px solid #C7D2FE' : '1px solid #E5E7EB',
-        borderLeft: isPendingApproval ? '4px solid #4F46E5' : '1px solid #E5E7EB',
+        backgroundColor: 'var(--surface)',
+        border: isPendingApproval ? '1px solid var(--indigo-border)' : '1px solid var(--border)',
+        borderLeft: isPendingApproval ? '4px solid var(--accent-indigo)' : '1px solid var(--border)',
         borderRadius: '10px',
         padding: '18px 20px',
         marginBottom: '10px',
@@ -138,14 +138,14 @@ export default function RequestCard({ request, onUpdate }) {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px' }}>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap', marginBottom: '6px' }}>
-              <span style={{ color: '#111827', fontSize: '15px', fontWeight: 600 }}>
+              <span style={{ color: 'var(--text)', fontSize: '15px', fontWeight: 600 }}>
                 {request.title}
               </span>
               {isPendingApproval && (
                 <span style={{
                   fontSize: '11px', fontWeight: 600,
-                  color: '#4F46E5', background: '#EEF2FF',
-                  border: '1px solid #C7D2FE', borderRadius: '4px',
+                  color: 'var(--accent-indigo)', background: 'var(--indigo-bg)',
+                  border: '1px solid var(--indigo-border)', borderRadius: '4px',
                   padding: '2px 7px',
                 }}>
                   Pending Approval
@@ -153,19 +153,19 @@ export default function RequestCard({ request, onUpdate }) {
               )}
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-              <span style={{ color: '#6B7280', fontSize: '13px' }}>{request.department}</span>
+              <span style={{ color: 'var(--text-dim)', fontSize: '13px' }}>{request.department}</span>
               {!isPendingApproval && (
                 <>
-                  <span style={{ color: '#D1D5DB' }}>·</span>
+                  <span style={{ color: 'var(--border-strong)' }}>·</span>
                   <StatusBadge status={request.status} />
                 </>
               )}
-              <span style={{ color: '#D1D5DB' }}>·</span>
-              <span style={{ color: '#6B7280', fontSize: '13px' }}>Deadline: {request.deadline}</span>
+              <span style={{ color: 'var(--border-strong)' }}>·</span>
+              <span style={{ color: 'var(--text-dim)', fontSize: '13px' }}>Deadline: {request.deadline}</span>
               {isManager && request.submitted_by_name && (
                 <>
-                  <span style={{ color: '#D1D5DB' }}>·</span>
-                  <span style={{ color: '#6B7280', fontSize: '12px' }}>
+                  <span style={{ color: 'var(--border-strong)' }}>·</span>
+                  <span style={{ color: 'var(--text-dim)', fontSize: '12px' }}>
                     By {request.submitted_by_name}
                   </span>
                 </>
@@ -178,7 +178,7 @@ export default function RequestCard({ request, onUpdate }) {
         </div>
 
         {request.description && (
-          <p style={{ color: '#6B7280', fontSize: '13px', marginTop: '10px', lineHeight: 1.55 }}>
+          <p style={{ color: 'var(--text-dim)', fontSize: '13px', marginTop: '10px', lineHeight: 1.55 }}>
             {request.description}
           </p>
         )}
@@ -254,15 +254,15 @@ export default function RequestCard({ request, onUpdate }) {
         </div>
 
         {error && (
-          <div style={{ color: '#DC2626', fontSize: '13px', marginTop: '8px' }}>{error}</div>
+          <div style={{ color: 'var(--danger)', fontSize: '13px', marginTop: '8px' }}>{error}</div>
         )}
 
         {/* Manager inline update form */}
         {isManager && showUpdate && !isPendingApproval && (
           <div style={{
             marginTop: '14px', padding: '16px',
-            backgroundColor: '#F9FAFB', borderRadius: '8px',
-            border: '1px solid #E5E7EB',
+            backgroundColor: 'var(--surface-2)', borderRadius: '8px',
+            border: '1px solid var(--border)',
             display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px',
             alignItems: 'end',
           }}>

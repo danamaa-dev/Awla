@@ -1,9 +1,9 @@
 const STATUS = {
-  open:        { color: '#4F46E5', bg: '#EEF2FF', border: '#C7D2FE', label: 'Open' },
-  in_progress: { color: '#D97706', bg: '#FFFBEB', border: '#FDE68A', label: 'In Progress' },
-  overdue:     { color: '#DC2626', bg: '#FEF2F2', border: '#FECACA', label: 'Overdue' },
-  completed:   { color: '#059669', bg: '#ECFDF5', border: '#A7F3D0', label: 'Completed' },
-  rejected:    { color: '#6B7280', bg: '#F9FAFB', border: '#E5E7EB', label: 'Rejected' },
+  open:        { color: 'var(--accent-indigo)', bg: 'var(--indigo-bg)', border: 'var(--indigo-border)', label: 'Open' },
+  in_progress: { color: 'var(--warning)', bg: 'var(--warning-bg)', border: 'var(--warning-border)', label: 'In Progress' },
+  overdue:     { color: 'var(--danger)', bg: 'var(--danger-bg)', border: 'var(--danger-border)', label: 'Overdue' },
+  completed:   { color: 'var(--success)', bg: 'var(--success-bg)', border: 'var(--success-border)', label: 'Completed' },
+  rejected:    { color: 'var(--text-dim)', bg: 'var(--surface-2)', border: 'var(--border)', label: 'Rejected' },
 }
 
 export default function StatusBadge({ status }) {

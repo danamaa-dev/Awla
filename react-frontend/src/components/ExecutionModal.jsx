@@ -9,15 +9,15 @@ import {
 const COLORS = ['#4F46E5', '#059669', '#D97706', '#DC2626', '#6B7280']
 
 const tooltipStyle = {
-  contentStyle: { backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '8px', color: '#111827' },
-  labelStyle: { color: '#111827' },
-  itemStyle: { color: '#6B7280' },
+  contentStyle: { backgroundColor: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text)' },
+  labelStyle: { color: 'var(--text)' },
+  itemStyle: { color: 'var(--text-dim)' },
 }
 
 function Chart({ chartType, data, groupBy, metric }) {
   if (!data || data.length === 0) {
     return (
-      <div style={{ textAlign: 'center', color: '#6B7280', padding: '40px 0', fontSize: '14px' }}>
+      <div style={{ textAlign: 'center', color: 'var(--text-dim)', padding: '40px 0', fontSize: '14px' }}>
         No chart data available.
       </div>
     )
@@ -39,7 +39,7 @@ function Chart({ chartType, data, groupBy, metric }) {
             {data.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
           </Pie>
           <Tooltip {...tooltipStyle} />
-          <Legend wrapperStyle={{ color: '#6B7280', fontSize: '12px' }} />
+          <Legend wrapperStyle={{ color: 'var(--text-dim)', fontSize: '12px' }} />
         </PieChart>
       </ResponsiveContainer>
     )
@@ -87,8 +87,8 @@ export default function ExecutionModal({ result, onClose }) {
       onClick={e => { if (e.target === e.currentTarget) onClose() }}
     >
       <div style={{
-        backgroundColor: '#FFFFFF',
-        border: '1px solid #E5E7EB',
+        backgroundColor: 'var(--surface)',
+        border: '1px solid var(--border)',
         borderRadius: '12px',
         width: '100%',
         maxWidth: '820px',
@@ -99,10 +99,10 @@ export default function ExecutionModal({ result, onClose }) {
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
           <div>
-            <h2 style={{ color: '#111827', fontSize: '18px', fontWeight: 700, margin: 0 }}>
+            <h2 style={{ color: 'var(--text)', fontSize: '18px', fontWeight: 700, margin: 0 }}>
               {result.report_title || 'Dashboard'}
             </h2>
-            <div style={{ fontSize: '12px', color: '#6B7280', marginTop: '4px' }}>
+            <div style={{ fontSize: '12px', color: 'var(--text-dim)', marginTop: '4px' }}>
               {result.data?.length ?? 0} rows · {result.chart_type} chart
             </div>
           </div>
@@ -121,13 +121,13 @@ export default function ExecutionModal({ result, onClose }) {
         {result.summary && (
           <div style={{
             marginTop: '20px',
-            backgroundColor: '#F9FAFB',
-            border: '1px solid #E5E7EB',
+            backgroundColor: 'var(--surface-2)',
+            border: '1px solid var(--border)',
             borderRadius: '8px',
             padding: '16px',
           }}>
-            <div style={{ color: '#6B7280', fontSize: '12px', fontWeight: 500, marginBottom: '8px' }}>Summary</div>
-            <p style={{ color: '#111827', fontSize: '14px', lineHeight: 1.7, margin: 0 }}>
+            <div style={{ color: 'var(--text-dim)', fontSize: '12px', fontWeight: 500, marginBottom: '8px' }}>Summary</div>
+            <p style={{ color: 'var(--text)', fontSize: '14px', lineHeight: 1.7, margin: 0 }}>
               {result.summary}
             </p>
           </div>
@@ -135,14 +135,14 @@ export default function ExecutionModal({ result, onClose }) {
 
         {columns.length > 0 && (
           <div style={{ marginTop: '20px', overflowX: 'auto' }}>
-            <div style={{ color: '#6B7280', fontSize: '12px', fontWeight: 500, marginBottom: '8px' }}>Data</div>
+            <div style={{ color: 'var(--text-dim)', fontSize: '12px', fontWeight: 500, marginBottom: '8px' }}>Data</div>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
               <thead>
-                <tr style={{ backgroundColor: '#F9FAFB' }}>
+                <tr style={{ backgroundColor: 'var(--surface-2)' }}>
                   {columns.map(col => (
                     <th key={col} style={{
                       padding: '8px 14px', textAlign: 'left',
-                      color: '#374151', borderBottom: '1px solid #E5E7EB',
+                      color: 'var(--text-heading)', borderBottom: '1px solid var(--border)',
                       fontWeight: 600, whiteSpace: 'nowrap',
                     }}>
                       {col}
@@ -152,11 +152,11 @@ export default function ExecutionModal({ result, onClose }) {
               </thead>
               <tbody>
                 {result.data.map((row, i) => (
-                  <tr key={i} style={{ backgroundColor: i % 2 === 0 ? '#FFFFFF' : '#F9FAFB' }}>
+                  <tr key={i} style={{ backgroundColor: i % 2 === 0 ? 'var(--surface)' : 'var(--surface-2)' }}>
                     {columns.map(col => (
                       <td key={col} style={{
-                        padding: '8px 14px', color: '#111827',
-                        borderBottom: '1px solid #E5E7EB',
+                        padding: '8px 14px', color: 'var(--text)',
+                        borderBottom: '1px solid var(--border)',
                       }}>
                         {row[col] ?? '—'}
                       </td>

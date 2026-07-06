@@ -28,9 +28,14 @@ export default function Navbar() {
           Dashboard
         </Link>
         {user?.role === 'manager' && (
-          <Link to="/report" className={`nav-link ${isActive('/report') ? 'active' : ''}`}>
-            Meeting Report
-          </Link>
+          <>
+            <Link to="/report" className={`nav-link ${isActive('/report') ? 'active' : ''}`}>
+              Meeting Report
+            </Link>
+            <Link to="/users" className={`nav-link ${isActive('/users') ? 'active' : ''}`}>
+              Users
+            </Link>
+          </>
         )}
       </div>
 

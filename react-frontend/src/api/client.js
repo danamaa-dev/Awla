@@ -41,6 +41,14 @@ export const login = (email, password) => {
 }
 export const logout = () => api.post('/api/auth/logout')
 export const getMe = () => api.get('/api/auth/me')
+export const acceptInvite   = (token, password) => api.post('/api/auth/accept-invite', { token, password })
+export const forgotPassword = (email)           => api.post('/api/auth/forgot-password', { email })
+export const resetPassword  = (token, password) => api.post('/api/auth/reset-password', { token, password })
+
+// User management (manager-only)
+export const listUsers  = ()               => api.get('/api/users')
+export const inviteUser = (data)           => api.post('/api/users/invite', data)
+export const updateUser = (id, data)       => api.patch(`/api/users/${id}`, data)
 
 // Requests
 export const submitRequest       = (data)          => api.post('/api/requests', data)

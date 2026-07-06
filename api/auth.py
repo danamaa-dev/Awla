@@ -88,6 +88,15 @@ def get_current_user(
     user = get_user_by_email(email)
     if not user:
         raise exc
+    # Re-fetched fresh on every request (not cached in the token), so a
+    # role or department change takes effect immediately. status and
+    # token_version specifically need to be checked against the token's
+    # own "tv" claim: a suspension or password reset must invalidate a
+    # session immediately rather than waiting out the 8h token expiry.
+    if user["status"] != "active":
+        raise exc
+    if payload.get("tv") != user["token_version"]:
+        raise exc
     return user
 
 

@@ -4,10 +4,14 @@ import { AuthProvider, useAuth } from './context/AuthContext'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import Navbar from './components/Navbar'
 
-const Login         = lazy(() => import('./pages/Login'))
-const Dashboard     = lazy(() => import('./pages/Dashboard'))
-const NewRequest    = lazy(() => import('./pages/NewRequest'))
-const MeetingReport = lazy(() => import('./pages/MeetingReport'))
+const Login          = lazy(() => import('./pages/Login'))
+const Dashboard      = lazy(() => import('./pages/Dashboard'))
+const NewRequest     = lazy(() => import('./pages/NewRequest'))
+const MeetingReport  = lazy(() => import('./pages/MeetingReport'))
+const ManageUsers    = lazy(() => import('./pages/ManageUsers'))
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'))
+const ResetPassword  = lazy(() => import('./pages/ResetPassword'))
+const AcceptInvite   = lazy(() => import('./pages/AcceptInvite'))
 
 function FullPageSpinner() {
   return (
@@ -33,6 +37,9 @@ function AppShell() {
       <Suspense fallback={<FullPageSpinner />}>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/accept-invite" element={<AcceptInvite />} />
           <Route path="/" element={
             <ProtectedRoute><Dashboard /></ProtectedRoute>
           } />
@@ -41,6 +48,9 @@ function AppShell() {
           } />
           <Route path="/report" element={
             <ProtectedRoute managerOnly><MeetingReport /></ProtectedRoute>
+          } />
+          <Route path="/users" element={
+            <ProtectedRoute managerOnly><ManageUsers /></ProtectedRoute>
           } />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

@@ -167,7 +167,8 @@ rag/                   embedding.py, chromadb_client.py (retrieval)
 chromadb_setup/        Builds/refreshes the Chroma vector store
 data/                  database.py (users/requests), org_database.py
                        (synthetic analytics data the execution agent queries)
-scripts/               create_user.py -- the only way to create an account
+services/              email.py -- invite/reset emails (logged if SMTP unset)
+scripts/               create_user.py -- bootstraps the first manager account
 react-frontend/        React SPA (Vite) -- pages, components, API client
 tests/                 pytest suite
 react-frontend/src/**/*.test.jsx   vitest suite
@@ -201,6 +202,8 @@ Full documented list in `.env.example` (backend) and
 | `ENVIRONMENT` | No (default `development`) | Set to `production` to make the auth cookie `Secure` (HTTPS-only). |
 | `ALLOWED_ORIGINS` | No | Comma-separated CORS allowlist for the frontend origin(s). |
 | `CHROMA_PERSIST_DIR` | No | Where the vector store persists on disk. |
+| `FRONTEND_URL` | No (default `http://localhost:5173`) | Used to build the links sent in invite/password-reset emails. |
+| `SMTP_HOST` | No | If unset, invite/reset emails are logged instead of sent — fine for local dev, not production. |
 
 ## Running the project
 
@@ -210,12 +213,21 @@ Full documented list in `.env.example` (backend) and
 uvicorn api.main:app --reload --port 8000
 ```
 
-There is no demo data and no self-registration endpoint. Create your first
-account:
+There is no demo data and no self-registration endpoint. Bootstrap your
+first (manager) account via the CLI:
 
 ```bash
 python scripts/create_user.py
 ```
+
+Every account after that is created by a manager, from inside the app,
+via **Users → Invite a New User**: a manager sets the new person's name,
+email, role, and department; the invitee gets an emailed link (or, if
+`SMTP_HOST` isn't configured, the link is logged instead) and sets their
+own password to activate the account. Managers can also deactivate an
+account (blocks login and any session already in progress immediately)
+or reactivate one from the same page. Forgotten passwords are self-service
+via **Forgot password?** on the login page.
 
 **Frontend**
 

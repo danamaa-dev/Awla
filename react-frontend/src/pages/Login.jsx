@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { login as apiLogin } from '../api/client'
 import { useAuth } from '../context/AuthContext'
 import AwlaLogo from '../components/AwlaLogo'
@@ -77,7 +77,7 @@ export default function Login() {
             />
           </div>
 
-          <div style={{ marginBottom: '24px' }}>
+          <div style={{ marginBottom: '10px' }}>
             <label className="label">Password</label>
             <input
               type="password"
@@ -88,6 +88,12 @@ export default function Login() {
               required
               autoComplete="current-password"
             />
+          </div>
+
+          <div style={{ textAlign: 'right', marginBottom: '20px' }}>
+            <Link to="/forgot-password" style={{ fontSize: '13px', color: 'var(--text-dim)' }}>
+              Forgot password?
+            </Link>
           </div>
 
           <button

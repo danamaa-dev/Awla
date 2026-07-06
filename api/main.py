@@ -46,19 +46,29 @@ from agents.report_agent import run_report_agent
 from chromadb_setup.setup import setup_chromadb
 from data.database import (
     _connection,
+    accept_invite,
+    count_active_managers,
+    create_invite_token,
+    create_invited_user,
+    create_password_reset_token,
     get_all_requests,
     get_latest_meeting_report,
     get_request_by_id,
     get_requests_by_user,
+    get_user_by_id,
     init_db,
     insert_request,
     is_valid_transition,
+    list_users,
+    reset_password_with_token,
     save_meeting_report,
     update_request_after_clarification,
     update_request_priority,
     update_request_status,
+    update_user,
 )
 from graph.workflow import run_workflow
+from services.email import send_invite_email, send_reset_email
 
 # ── App ──────────────────────────────────────────────────────────────────────
 
@@ -159,6 +169,52 @@ class PriorityUpdate(BaseModel):
     reason: Optional[str] = Field("", max_length=1000)
 
 
+class UserRole(str, Enum):
+    employee = "employee"
+    manager = "manager"
+
+
+class UserStatus(str, Enum):
+    invited = "invited"
+    active = "active"
+    suspended = "suspended"
+
+
+class InviteUserRequest(BaseModel):
+    name: str = Field(..., min_length=1, max_length=200)
+    email: str = Field(..., min_length=3, max_length=255)
+    role: UserRole
+    department: str = Field(..., min_length=1, max_length=100)
+
+    @field_validator("email")
+    @classmethod
+    def _email_format(cls, v):
+        v = v.strip().lower()
+        if "@" not in v or v.startswith("@") or v.endswith("@"):
+            raise ValueError("must be a valid email address")
+        return v
+
+
+class UpdateUserRequest(BaseModel):
+    role: Optional[UserRole] = None
+    department: Optional[str] = Field(None, min_length=1, max_length=100)
+    status: Optional[UserStatus] = None
+
+
+class AcceptInviteRequest(BaseModel):
+    token: str = Field(..., min_length=10, max_length=500)
+    password: str = Field(..., min_length=8, max_length=200)
+
+
+class ForgotPasswordRequest(BaseModel):
+    email: str = Field(..., min_length=3, max_length=255)
+
+
+class ResetPasswordRequest(BaseModel):
+    token: str = Field(..., min_length=10, max_length=500)
+    password: str = Field(..., min_length=8, max_length=200)
+
+
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
 def _run_analysis(data: dict):
@@ -172,6 +228,11 @@ def _run_analysis(data: dict):
 def _require_ownership(current_user: dict, req: dict):
     if current_user["role"] != "manager" and req.get("submitted_by") != current_user["id"]:
         raise HTTPException(status_code=403, detail="Access denied")
+
+
+def _public_user(user: dict) -> dict:
+    """Strips password_hash before a user row goes into an API response."""
+    return {k: v for k, v in user.items() if k != "password_hash"}
 
 
 def _sanitize_priority(priority: dict) -> dict:
@@ -230,12 +291,21 @@ def health():
 @limiter.limit("10/minute")
 def login(request: Request, response: Response, form_data: OAuth2PasswordRequestForm = Depends()):
     user = get_user_by_email(form_data.username)
-    if not user or not verify_password(form_data.password, user["password_hash"]):
+    # An invited user has no password_hash yet -- checked before
+    # verify_password so there's nothing to compare against, not an
+    # exception. Wrong password and "hasn't activated their invite yet"
+    # both collapse to the same generic message.
+    if not user or not user["password_hash"] or not verify_password(form_data.password, user["password_hash"]):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password",
         )
-    token = create_access_token({"sub": user["email"]})
+    if user["status"] == "suspended":
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="This account has been deactivated. Contact your manager.",
+        )
+    token = create_access_token({"sub": user["email"], "tv": user["token_version"]})
     # httpOnly cookie for the React browser client (audit finding H14) --
     # JS can't read this, so an XSS bug can no longer exfiltrate the
     # session token the way it could from localStorage. Also returned in
@@ -279,6 +349,86 @@ def get_me(current_user: dict = Depends(get_current_user)):
         "role": current_user["role"],
         "department": current_user["department"],
     }
+
+
+@app.post("/api/auth/accept-invite")
+@limiter.limit("10/minute")
+def accept_invite_endpoint(request: Request, data: AcceptInviteRequest):
+    if not accept_invite(data.token, data.password):
+        raise HTTPException(status_code=400, detail="This invite link is invalid or has expired")
+    return {"status": "activated"}
+
+
+@app.post("/api/auth/forgot-password")
+@limiter.limit("5/minute")
+def forgot_password(request: Request, data: ForgotPasswordRequest):
+    email = data.email.strip().lower()
+    raw_token = create_password_reset_token(email)
+    if raw_token:
+        user = get_user_by_email(email)
+        send_reset_email(email, user["name"], raw_token)
+    # Identical response whether or not the account exists, so this
+    # endpoint can't be used to enumerate registered emails.
+    return {"status": "if_account_exists_email_sent"}
+
+
+@app.post("/api/auth/reset-password")
+@limiter.limit("10/minute")
+def reset_password_endpoint(request: Request, data: ResetPasswordRequest):
+    if not reset_password_with_token(data.token, data.password):
+        raise HTTPException(status_code=400, detail="This reset link is invalid or has expired")
+    return {"status": "password_reset"}
+
+
+# ── User management endpoints (manager-only) ──────────────────────────────────
+# There is still only one privileged role (manager) -- these are gated by
+# the same require_manager dependency used for approvals/reports, rather
+# than introducing a separate admin role before there's a real need to
+# distinguish "can manage requests" from "can manage accounts".
+
+@app.post("/api/users/invite", status_code=status.HTTP_201_CREATED)
+@limiter.limit("20/minute")
+def invite_user(
+    request: Request,
+    data: InviteUserRequest,
+    current_user: dict = Depends(require_manager),
+):
+    if get_user_by_email(data.email):
+        raise HTTPException(status_code=409, detail="A user with this email already exists")
+    user_id = create_invited_user(data.name, data.email, data.role.value, data.department, current_user["id"])
+    raw_token = create_invite_token(user_id)
+    send_invite_email(data.email, data.name, raw_token)
+    return {"id": user_id, "email": data.email, "status": "invited"}
+
+
+@app.get("/api/users")
+def list_all_users(current_user: dict = Depends(require_manager)):
+    return list_users()
+
+
+@app.patch("/api/users/{user_id}")
+def edit_user(
+    user_id: int,
+    data: UpdateUserRequest,
+    current_user: dict = Depends(require_manager),
+):
+    target = get_user_by_id(user_id)
+    if not target:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if data.status == UserStatus.suspended:
+        if user_id == current_user["id"]:
+            raise HTTPException(status_code=400, detail="You cannot deactivate your own account")
+        if target["role"] == "manager" and count_active_managers(exclude_id=user_id) == 0:
+            raise HTTPException(status_code=400, detail="Cannot deactivate the last active manager")
+
+    update_user(
+        user_id,
+        role=data.role.value if data.role else None,
+        department=data.department,
+        status=data.status.value if data.status else None,
+    )
+    return _public_user(get_user_by_id(user_id))
 
 
 # ── Request endpoints ─────────────────────────────────────────────────────────

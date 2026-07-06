@@ -1,0 +1,12 @@
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+exclude = ["react-frontend"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+# E501: long f-string prompts are common and fine here.
+# E402: every entrypoint module manipulates sys.path before importing
+# project modules by design (so `python api/main.py` and `python -m
+# pytest` both resolve the same package layout) -- not a code smell.
+ignore = ["E501", "E402"]

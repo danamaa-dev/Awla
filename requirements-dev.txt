@@ -1,0 +1,5 @@
+-r requirements.txt
+pytest==9.1.1
+# Only needed for FastAPI's TestClient (built on starlette.testclient,
+# which requires httpx installed) -- not used by the app itself.
+httpx==0.28.1

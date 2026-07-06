@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+
+      - name: Run backend test suite
+        run: python -m pytest tests/ -v
+        env:
+          # conftest.py also sets these, but declaring them here documents
+          # what CI needs without depending on import order.
+          SECRET_KEY: ci-only-secret-not-used-anywhere-real
+          ENVIRONMENT: development
+          OPENAI_API_KEY: ""
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: react-frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: react-frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run frontend test suite
+        run: npm test
+
+      - name: Build production bundle
+        run: npm run build
+        env:
+          VITE_API_URL: http://localhost:8000
+
+      - name: Verify no demo credentials leak into the production bundle
+        run: |
+          if grep -rl "employee123\|manager123" dist/assets/*.js; then
+            echo "Demo credentials found in production bundle!"
+            exit 1
+          fi
+
+  docker-build:
+    runs-on: ubuntu-latest
+    needs: [backend, frontend]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build backend image
+        run: docker build -t awla-api:ci .
+
+      - name: Build frontend image
+        run: docker build -t awla-web:ci --build-arg VITE_API_URL=http://localhost:8000 react-frontend

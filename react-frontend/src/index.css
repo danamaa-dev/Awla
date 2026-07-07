@@ -173,6 +173,17 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   padding: 28px 24px;
 }
 
+/* Every page was jumping straight from the navbar into a muted subtitle
+   line with no heading at all -- .page-title gives each page an actual
+   identity above that subtitle. */
+.page-title {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.4px;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
 .page-subtitle {
   font-size: 14px;
   color: var(--text-dim);
@@ -252,6 +263,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   color: var(--accent-blue);
   background: var(--info-bg);
   font-weight: 600;
+  box-shadow: inset 0 -2px 0 0 var(--accent-blue);
 }
 
 .navbar-right {
@@ -324,10 +336,15 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   box-shadow: var(--shadow-sm);
 }
 
-.stat-card.total     { border-left-color: var(--accent-teal); }
-.stat-card.pending   { border-left-color: var(--warning); }
-.stat-card.overdue   { border-left-color: var(--danger); }
-.stat-card.completed { border-left-color: var(--success); }
+/* A faint top-down wash of each card's own accent color, fading back to
+   the surface color -- reuses the existing semantic -bg tokens (already
+   defined for badges, and already themed for dark mode) rather than
+   inventing new derived colors, so four identical white boxes read as
+   distinct at a glance instead of only differing by a 4px border. */
+.stat-card.total     { border-left-color: var(--accent-teal); background: linear-gradient(180deg, var(--accent-teal-focus) 0%, var(--surface) 65%); }
+.stat-card.pending   { border-left-color: var(--warning); background: linear-gradient(180deg, var(--warning-bg) 0%, var(--surface) 65%); }
+.stat-card.overdue   { border-left-color: var(--danger); background: linear-gradient(180deg, var(--danger-bg) 0%, var(--surface) 65%); }
+.stat-card.completed { border-left-color: var(--success); background: linear-gradient(180deg, var(--success-bg) 0%, var(--surface) 65%); }
 
 .stat-label {
   font-size: 12px;
@@ -359,6 +376,32 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   padding: 24px;
   box-shadow: var(--shadow-md);
 }
+
+/* RequestCard had no shadow at all -- on the page's flat light-gray
+   background, a white card with only a 1px border barely separated
+   from the page itself. The hover lift signals "this is the thing you
+   scan/click" the way .filter-tab.active and .btn-primary already do
+   elsewhere. */
+.request-card {
+  background: var(--surface);
+  border-radius: 10px;
+  padding: 18px 20px;
+  margin-bottom: 10px;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.15s;
+}
+
+.request-card:hover { box-shadow: var(--shadow-md); }
+
+/* Plain-text navigational links (auth pages) -- no default browser
+   underline/blue, brand-tinted on hover instead. */
+.text-link {
+  color: var(--text-dim);
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.text-link:hover { color: var(--accent-blue); text-decoration: underline; }
 
 /* ── Agent badges ────────────────────────────────────────────── */
 .agent-badges {
@@ -554,6 +597,24 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .btn-danger:hover { background: var(--danger-border); }
 
+/* Same soft-tint pattern as .btn-danger, for actions that need to stand
+   out from a neutral .btn-secondary but shouldn't compete with the
+   page's one full-strength gradient .btn-primary action (e.g.
+   "Reactivate" in a table full of rows). */
+.btn-success-soft {
+  background: var(--success-bg);
+  color: var(--success);
+  border: 1px solid var(--success-border);
+  border-radius: var(--radius-md);
+  padding: 10px 22px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-success-soft:hover { background: var(--success-border); }
+
 .btn-submit {
   width: 100%;
   padding: 12px;
@@ -635,7 +696,16 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   border-radius: var(--radius-lg);
 }
 
-.empty-icon        { font-size: 40px; margin-bottom: 16px; }
+.empty-icon {
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  background: var(--accent-teal-focus);
+}
 .empty-state-title { font-size: 16px; font-weight: 600; color: var(--text-heading); margin-bottom: 6px; }
 .empty-state-text  { font-size: 14px; color: var(--text-dim); }
 
@@ -649,7 +719,16 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   margin-top: 20px;
 }
 
-.report-placeholder-icon  { font-size: 36px; margin-bottom: 12px; }
+.report-placeholder-icon {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 12px;
+  border-radius: 50%;
+  background: var(--accent-teal-focus);
+}
 .report-placeholder-title { font-size: 16px; font-weight: 600; color: var(--text-heading); margin-bottom: 8px; }
 .report-placeholder-text  {
   font-size: 14px; color: var(--text-dim);

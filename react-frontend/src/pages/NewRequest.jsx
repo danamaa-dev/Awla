@@ -205,6 +205,7 @@ export default function NewRequest() {
 
   return (
     <div className="page-narrow">
+      <h1 className="page-title">New Request</h1>
       <p className="page-subtitle">Submit a new internal data request</p>
 
       {successMsg && <div className="alert-success">{successMsg}</div>}

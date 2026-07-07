@@ -127,14 +127,13 @@ export default function RequestCard({ request, onUpdate }) {
 
   return (
     <>
-      <div style={{
-        backgroundColor: 'var(--surface)',
-        border: isPendingApproval ? '1px solid var(--indigo-border)' : '1px solid var(--border)',
-        borderLeft: isPendingApproval ? '4px solid var(--accent-indigo)' : '1px solid var(--border)',
-        borderRadius: '10px',
-        padding: '18px 20px',
-        marginBottom: '10px',
-      }}>
+      <div
+        className="request-card"
+        style={{
+          border: isPendingApproval ? '1px solid var(--indigo-border)' : '1px solid var(--border)',
+          borderLeft: isPendingApproval ? '4px solid var(--accent-indigo)' : '1px solid var(--border)',
+        }}
+      >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px' }}>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap', marginBottom: '6px' }}>

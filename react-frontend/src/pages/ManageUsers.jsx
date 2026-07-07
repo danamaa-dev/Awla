@@ -180,7 +180,7 @@ function UserRow({ u, isSelf, onChange }) {
             <button
               onClick={handleToggleStatus}
               disabled={saving}
-              className={u.status === 'suspended' ? 'btn-primary' : 'btn-danger'}
+              className={u.status === 'suspended' ? 'btn-success-soft' : 'btn-danger'}
               style={{ padding: '5px 12px', fontSize: '12px' }}
             >
               {u.status === 'suspended' ? 'Reactivate' : 'Deactivate'}
@@ -216,6 +216,7 @@ export default function ManageUsers() {
 
   return (
     <div className="page">
+      <h1 className="page-title">Manage Users</h1>
       <p className="page-subtitle">Invite, manage, and deactivate user accounts</p>
 
       <InviteForm defaultDepartment={currentUser?.department || 'Finance'} onInvited={load} />

@@ -92,6 +92,7 @@ export default function MeetingReport() {
 
   return (
     <div className="page" style={{ maxWidth: '1000px' }}>
+      <h1 className="page-title">Meeting Report</h1>
       <p className="page-subtitle">AI-generated meeting summary and action items for all requests</p>
 
       {/* Stat summary */}
@@ -163,7 +164,7 @@ export default function MeetingReport() {
           {!report && !loading && (
             <div className="report-placeholder">
               <div className="report-placeholder-icon">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--text-faint)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--accent-teal)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="18" y1="20" x2="18" y2="10"/>
                   <line x1="12" y1="20" x2="12" y2="4"/>
                   <line x1="6" y1="20" x2="6" y2="14"/>

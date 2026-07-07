@@ -91,7 +91,7 @@ export default function Login() {
           </div>
 
           <div style={{ textAlign: 'right', marginBottom: '20px' }}>
-            <Link to="/forgot-password" style={{ fontSize: '13px', color: 'var(--text-dim)' }}>
+            <Link to="/forgot-password" className="text-link">
               Forgot password?
             </Link>
           </div>

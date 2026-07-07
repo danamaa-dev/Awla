@@ -71,7 +71,7 @@ export default function ForgotPassword() {
         )}
 
         <div style={{ textAlign: 'center', marginTop: '20px' }}>
-          <Link to="/login" style={{ fontSize: '13px', color: 'var(--text-dim)' }}>Back to sign in</Link>
+          <Link to="/login" className="text-link">Back to sign in</Link>
         </div>
       </div>
     </div>
